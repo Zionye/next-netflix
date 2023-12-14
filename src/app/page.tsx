@@ -1,5 +1,5 @@
 export default function Home() {
   return (
-    <main>Bilibili Clone</main>
+    <main className="text-white">Bilibili Clone</main>
   )
 }
