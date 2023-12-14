@@ -1,6 +1,21 @@
-import { PrismaClient } from '@prisma/client'
 
-const client = global.prismadb || new PrismaClient()
-if(process.env.NODE_ENV === 'production') global.prismadb = client
+import { PrismaClient } from '@prisma/client';
 
-export default client
+let client: PrismaClient;
+const datasourceUrl = process.env.DATABASE_URL;
+
+if (process.env.NODE_ENV === 'production') {
+  client = new PrismaClient();
+} else {
+  console.log('datasourceUrl：', datasourceUrl);
+  if (!global.prismadb) {
+    // global.prismadb = new PrismaClient()
+    
+    global.prismadb = new PrismaClient({
+      datasourceUrl,
+    });
+  }
+  client = global.prismadb;
+}
+
+export default client;
