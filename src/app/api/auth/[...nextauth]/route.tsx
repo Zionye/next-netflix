@@ -1,16 +1,30 @@
 import NextAuth from "next-auth";
+import type { NextAuthOptions } from 'next-auth'
 import Credentials from "next-auth/providers/credentials";
 import { compare } from 'bcrypt';
+
+import GithubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
+
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
 import prismadb from '~/lib/prismadb';
 
 // NextAuth 配置，实现用户身份验证和授权。
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = { // NextAuth 的入口，用于配置身份验证
   providers: [
-    Credentials({
-      id: 'credentials',
-      name: 'Credentials',
-      credentials: {  // 用于身份验证。
+    GithubProvider({
+      clientId: process.env.GITHUB_ID || '',
+      clientSecret: process.env.GITHUB_SECRET || '',
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    }),
+    Credentials({ // 身份验证提供程序的名称。是一个内置的身份验证提供程序，用于使用用户名和密码进行身份验证。
+      id: 'credentials', // 身份验证提供程序的唯一标识符
+      name: 'Credentials', // 身份验证提供程序的名称
+      credentials: {  // 包含用于身份验证的凭据类型
         email: {
           label: "Email",
           type: 'text',
@@ -20,9 +34,9 @@ const handler = NextAuth({
           type: 'password',
         }
       },
-      async authorize(credentials, req) { // 用于授权用户
+      async authorize(credentials, req) { // 回调函数，用于处理身份验证过程。
         console.log('credentials: ==>', credentials);
-        // 检查 credentials 对象中是否包含 email 和 password 
+        // 检查电子邮件和密码是否都已提供
         if(!credentials?.email || !credentials?.password){
           throw new Error('Email and password is required')
         }
@@ -54,17 +68,35 @@ const handler = NextAuth({
     })
   ],
   pages: { // 定义应用程序中用于登录的页面
-    signIn: '/auth',
+    signIn: '/auth', // 登录页面的 URL
   },
   debug: process.env.NODE_ENV === "development", // 开发环境中启用调试模式
+  adapter: PrismaAdapter(prismadb), // 使用 PrismaAdapter 适配器进行身份验证
   session: { // 配置会话存储策略，在本例中使用 JWT 作为会话存储策略。
     strategy: 'jwt',
   },
-  jwt: {
-    secret: process.env.NEXTAUTH_JWT_SECRET
+  jwt: { // 配置 JWT 策略
+    secret: process.env.NEXTAUTH_JWT_SECRET // JWT 密钥的配置
   },
-  secret: process.env.NEXTAUTH_SECRET
-})
+  secret: process.env.NEXTAUTH_SECRET, // NextAuth 应用程序的密钥配置
+  callbacks: {
+    async jwt({ token, user, account, profile, isNewUser }) {
+      // console.log('JWT ---- token, user, account, profile, isNewUser: ==>', token, user, account, profile, isNewUser);
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token, user }) {
+      // console.log('session, token, user: ===>', session, token, user);
+      if (session?.user && token) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
+  },
+}
+const handler = NextAuth(authOptions)
 
 /**
  *  GET 方法表示在 HTTP GET 请求下执行的操作。在这里，它将渲染一个名为 auth 的页面。
