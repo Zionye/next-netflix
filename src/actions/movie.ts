@@ -12,3 +12,9 @@ export async function fetchRandomMovie() {
   console.log('randomMovies[0]: ', randomMovies[0]);
   return randomMovies[0];
 }
+
+export async function fetchMovieList() {
+  const movies = await prismadb.movie.findMany();
+
+  return movies;
+}
