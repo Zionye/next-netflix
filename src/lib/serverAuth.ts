@@ -3,6 +3,18 @@ import { getServerSession } from 'next-auth';
 
 import prismadb from '~/lib/prismadb';
 
+export const getUserByEmail = async (email: string) => {
+  const currentUser = await prismadb.user.findUnique({
+    where: { email }
+  })
+
+  if(!currentUser){
+    throw new Error('Not signed in')
+  }
+
+  return { currentUser }
+}
+
 const serverAuth = async () => {
   const session = await getServerSession(authOptions);
   console.log('serverAuth session: ===>', session);
