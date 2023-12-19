@@ -5,7 +5,7 @@ import prismadb from '~/lib/prismadb';
 import serverAuth from '~/lib/serverAuth';
 
 export async function fetchRandomMovie() {
-  await serverAuth();
+  // await serverAuth();
 
   const movieCount = await prismadb.movie.count()
   const randomIndex = Math.floor(Math.random() * movieCount)
@@ -17,8 +17,28 @@ export async function fetchRandomMovie() {
   return randomMovies[0];
 }
 
+export async function fetchMovieById(movieId: string) {
+  // await serverAuth();
+
+  if (typeof movieId !== 'string') {
+    throw new Error('Invalid Id');
+  }
+
+  if (!movieId) {
+    throw new Error('Missing Id');
+  }
+
+  const movies = await prismadb.movie.findUnique({
+    where: {
+      id: movieId
+    }
+  });
+
+  return movies;
+}
+
 export async function fetchMovieList() {
-  await serverAuth();
+  // await serverAuth();
 
   const movies = await prismadb.movie.findMany();
 
