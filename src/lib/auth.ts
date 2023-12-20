@@ -91,8 +91,10 @@ export const authOptions: NextAuthOptions = { // NextAuth 的入口，用于配�
     async session({ session, token, user }) {
       console.log('session, token, user: ===>', session, token, user);
       if (session?.user && token) {
-        session.user.id = token.id as string;
+        // session.user.id = token.id as string;
+        session.user = {...session.user, ...token};
       }
+      console.log('change session--->',session)
       return session;
     },
   },
