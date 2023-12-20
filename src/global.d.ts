@@ -6,3 +6,13 @@ declare global {
     var prismadb: PrismaClient
   }
 }
+
+declare interface WatchProps {
+  id: string;
+  title: string;
+  description: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  genre: string;
+  duration: string;
+}

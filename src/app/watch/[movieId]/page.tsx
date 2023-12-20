@@ -4,12 +4,13 @@ import { useParams, useRouter } from "next/navigation"
 import React, { useEffect, useState } from 'react'
 import { fetchMovieById } from '~/actions/movie';
 import { AiOutlineArrowLeft } from "react-icons/ai";
+import { WatchProps } from "~/global";
 
 const Watch = () => {
   const  { movieId } = useParams()
 
   const router = useRouter()
-  const [movie, setMovie] = useState<{}>();
+  const [movie, setMovie] = useState<WatchProps>();
 
   async function startFetching(movieId: string) {
     const data = await fetchMovieById(movieId)

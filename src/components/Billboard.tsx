@@ -5,9 +5,10 @@ import { fetchRandomMovie } from '~/actions/movie';
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import PlayButton from '~/components/PlayButton';
 import useInfoModalStore from '~/store/useInfoModalStore';
+import { WatchProps } from "~/global";
 
 const Billboard = () => {
-  const [movie, setMovie] = useState({});
+  const [movie, setMovie] = useState<WatchProps>();
 
   const { openModal } = useInfoModalStore();
   const handleOpenModal = useCallback(() => {

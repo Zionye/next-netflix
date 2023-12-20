@@ -8,6 +8,7 @@ import PlayButton from './PlayButton';
 import FavoriteButton from './FavoriteButton';
 import useInfoModalStore from '~/store/useInfoModalStore';
 import { fetchMovieById } from '~/actions/movie';
+import { WatchProps } from "~/global";
 
 interface InfoModalProps {
   visible?: boolean;
@@ -15,7 +16,7 @@ interface InfoModalProps {
 }
 const InfoModal: React.FC<InfoModalProps> = ({visible, onClose}) => {
   const [isVisible, setIsVisible] = useState(visible);
-  const [movie, setMovie] = useState(null)
+  const [movie, setMovie] = useState<WatchProps>()
 
   const { movieId } = useInfoModalStore()
   console.log('InfoModal movieId: ', movieId);
@@ -28,7 +29,7 @@ const InfoModal: React.FC<InfoModalProps> = ({visible, onClose}) => {
     const data = await fetchMovieById(movieId)
     setMovie(data)
   }, [movieId]);
-  
+
   useEffect(()=>{
     setIsVisible(true)
     if(isVisible){
