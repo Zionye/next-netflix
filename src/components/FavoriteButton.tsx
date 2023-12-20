@@ -6,7 +6,7 @@ import { fetchAddFavoriteMovie, fetchDeleteFavoriteMovie } from '~/actions/movie
 import { getSelf } from '~/actions/user';
 
 export interface FavoriteButtonPorps {
-  movieId: string;
+  movieId: string | undefined;
 }
 const FavoriteButton: React.FC<FavoriteButtonPorps> = ({ movieId }) => {
   const currentUser = useRef<{}>()

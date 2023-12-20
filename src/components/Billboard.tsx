@@ -12,7 +12,9 @@ const Billboard = () => {
 
   const { openModal } = useInfoModalStore();
   const handleOpenModal = useCallback(() => {
-    openModal(movie?.id);
+    if (movie?.id) {
+      openModal(movie?.id);
+    }
   }, [openModal, movie?.id]);
 
   async function startFetching() {

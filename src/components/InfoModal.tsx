@@ -26,8 +26,10 @@ const InfoModal: React.FC<InfoModalProps> = ({visible, onClose}) => {
   //   setMovie(data)
   // }
   const startFetching =  useCallback(async () => {
-    const data = await fetchMovieById(movieId)
-    setMovie(data)
+    if(movieId){
+      const data = await fetchMovieById(movieId)
+      if(data) setMovie(data)
+    }
   }, [movieId]);
 
   useEffect(()=>{
@@ -39,7 +41,7 @@ const InfoModal: React.FC<InfoModalProps> = ({visible, onClose}) => {
   
   const handleClose = useCallback(() => {
     setIsVisible(false);
-    setMovie(null);
+    setMovie(undefined);
     setTimeout(() => {
       onClose();
     }, 300);

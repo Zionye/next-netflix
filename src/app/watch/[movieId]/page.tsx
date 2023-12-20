@@ -15,7 +15,7 @@ const Watch = () => {
   async function startFetching(movieId: string) {
     const data = await fetchMovieById(movieId)
     console.log('data: ', data);
-    setMovie(data)
+    if(data) setMovie(data)
   }
   useEffect(()=>{
     startFetching(movieId as string)
