@@ -1,6 +1,6 @@
 
 "use client"
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { AiOutlinePlus, AiOutlineCheck } from 'react-icons/ai';
 import { fetchAddFavoriteMovie, fetchDeleteFavoriteMovie } from '~/actions/movie';
 import { getSelf } from '~/actions/user';
@@ -10,36 +10,38 @@ export interface FavoriteButtonPorps {
   movieId: string | undefined;
 }
 const FavoriteButton: React.FC<FavoriteButtonPorps> = ({ movieId }) => {
-  const currentUser = useRef({})
-  // async function startFetching() {
-  //   const data = await getSelf()
-  //   currentUser.current = data
-  // }
+  const [currentUser, setCurrentUser] = useState<UserProps| null>(null)
+  const [updatedFavoriteIds, setUpdatedFavoriteIds] = useState<string[] | null>(null)
+
   const startFetching =  useCallback(async () => {
     const data = await getSelf()
-    if(data) currentUser.current = data
+    if(data) setCurrentUser(data)
   }, []);
   useEffect(()=>{
     startFetching()
-  },[])
+  },[startFetching])
 
   const isFavorite = useMemo(() => {
-    const list = currentUser?.current?.favoriteIds || [];
+
+    const list = currentUser?.favoriteIds || [];
 
     console.log('self: ', list);
-    return list.includes(movieId);
+    return list.includes(movieId as string);
   }, [currentUser, movieId]);
 
   const toggleFavorites = useCallback(async () => {
     let response;
     if(isFavorite){
-      response = await fetchDeleteFavoriteMovie(movieId)
+      response = await fetchDeleteFavoriteMovie(movieId as string)
     } else {
-      response = await fetchAddFavoriteMovie(movieId)
+      response = await fetchAddFavoriteMovie(movieId as string)
     }
 
-    // const updatedFavoriteIds = response?.data?.favoriteIds
-  }, [isFavorite, movieId])
+    setUpdatedFavoriteIds(response?.favoriteIds)
+    const copyUser = Object.assign({}, currentUser)
+    copyUser.favoriteIds = response?.favoriteIds
+    setCurrentUser(copyUser)
+  }, [isFavorite, movieId, currentUser, setUpdatedFavoriteIds, setCurrentUser])
 
   const Icon = isFavorite ? AiOutlineCheck : AiOutlinePlus;
 
