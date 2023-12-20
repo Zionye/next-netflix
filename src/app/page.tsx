@@ -4,10 +4,13 @@ import Billboard from "~/components/Billboard"
 import MovieList, { type MovieListProps } from "~/components/MovieList"
 import { useEffect, useState } from "react";
 import { fetchMovieList, fetchFavoriteMovies } from "~/actions/movie";
+import InfoModal from "~/components/InfoModal";
+import useInfoModalStore from '~/store/useInfoModalStore';
 
 export default function Home() {
   const [movies, setMovies] = useState<MovieListProps['data']>([]);
-  const [favorites, setFavorites] = useState<MovieListProps['data']>([])
+  const [favorites, setFavorites] = useState<MovieListProps['data']>([]);
+  const {isOpen, closeModal} = useInfoModalStore();
 
   async function startFetching() {
     const promiseAll = [await fetchMovieList(), await fetchFavoriteMovies()];
@@ -23,6 +26,7 @@ export default function Home() {
   
   return (
     <>
+      <InfoModal visible={isOpen} onClose={closeModal}/>
       <Navbar />
       <Billboard />
       <div className="pb-40" >
