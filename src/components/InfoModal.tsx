@@ -20,16 +20,21 @@ const InfoModal: React.FC<InfoModalProps> = ({visible, onClose}) => {
   const { movieId } = useInfoModalStore()
   console.log('InfoModal movieId: ', movieId);
 
-  const startFetching = async ()=>{
+  // const startFetching = async ()=>{
+  //   const data = await fetchMovieById(movieId)
+  //   setMovie(data)
+  // }
+  const startFetching =  useCallback(async () => {
     const data = await fetchMovieById(movieId)
     setMovie(data)
-  }
+  }, [movieId]);
+  
   useEffect(()=>{
     setIsVisible(true)
     if(isVisible){
       startFetching(movieId)
     }
-  },[movieId])
+  },[setIsVisible, startFetching, movieId, isVisible])
   
   const handleClose = useCallback(() => {
     setIsVisible(false);
