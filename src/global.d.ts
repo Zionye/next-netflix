@@ -16,3 +16,15 @@ declare interface WatchProps {
   genre: string;
   duration: string;
 }
+
+declare interface UserProps {
+  id: string;
+  name: string;
+  image?: string;
+  email?: string;
+  emailVerified?: Date;
+  hashedPassword?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  favoriteIds: string[];
+}

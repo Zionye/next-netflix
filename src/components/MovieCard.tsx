@@ -36,7 +36,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ data }) => {
             >
               <BsFillPlayFill size={30} />
             </div>
-            <FavoriteButton movieId={ data.id } />
+            {/* <FavoriteButton movieId={ data.id } /> */}
             <div 
               onClick={() => openModal(data?.id)} 
               className="cursor-pointer ml-auto group/item w-6 h-6 lg:w-10 lg:h-10 border-white border-2 rounded-full flex justify-center items-center transition hover:border-neutral-300"

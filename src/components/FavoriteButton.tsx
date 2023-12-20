@@ -4,24 +4,29 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { AiOutlinePlus, AiOutlineCheck } from 'react-icons/ai';
 import { fetchAddFavoriteMovie, fetchDeleteFavoriteMovie } from '~/actions/movie';
 import { getSelf } from '~/actions/user';
+import { UserProps } from '~/global'
 
 export interface FavoriteButtonPorps {
   movieId: string | undefined;
 }
 const FavoriteButton: React.FC<FavoriteButtonPorps> = ({ movieId }) => {
-  const currentUser = useRef<{}>()
-  async function startFetching() {
+  const currentUser = useRef({})
+  // async function startFetching() {
+  //   const data = await getSelf()
+  //   currentUser.current = data
+  // }
+  const startFetching =  useCallback(async () => {
     const data = await getSelf()
-    currentUser.current = data
-  }
+    if(data) currentUser.current = data
+  }, []);
   useEffect(()=>{
     startFetching()
   },[])
 
   const isFavorite = useMemo(() => {
-    const list = currentUser?.favoriteIds || [];
+    const list = currentUser?.current?.favoriteIds || [];
 
-    console.log('self: ', currentUser);
+    console.log('self: ', list);
     return list.includes(movieId);
   }, [currentUser, movieId]);
 
